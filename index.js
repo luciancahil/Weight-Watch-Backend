@@ -5,11 +5,31 @@ const express = require('express');
 const cors = require('cors');
 const app = express();
 const {PORT = 3000} = process.env
+const mysql = require('mysql');
+var data = require("./Login.json");
 
 app.use(cors());
+var SQLResults;
+
+var con = mysql.createConnection({
+  host: data.host,
+  user: data.user,
+  password: data.password,
+  database: "weightTrack"
+});
+
+
+//sets SQL results to be the entire contents of the SQL Table
+con.connect(function(err) {
+  if (err) throw err;
+  con.query("SELECT * FROM userInfo", function (err, result, fields) {
+    if (err) throw err;
+    SQLResults = result;
+  });
+});
 
 app.get('/', (req, res) => {
-  res.send('Login Page')
+  res.send(SQLResults[0])
 });
 
 
