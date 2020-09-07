@@ -32,16 +32,19 @@ con.connect(function(err) {
 
 app.get('/login', (req, res) => {
   const{username, password} = req.query;
-  console.log(username, password);
-
   //Checks if a username exists
   isValidUsername(username).then(function(result){
-    console.log(result[0].numUN);
     if(result[0].numUN == 0){
       res.send("No Username");
     }
   })
   
+  //checks if password hashed matches the hash stored
+  getSaltandHash(username).then(function(result){
+    console.log(result[0].salt);
+    console.log(result[0].passhash);
+    console.log(password + result[0].passhash)
+  })
 
   con.query("SELECT * FROM userInfo", (err, result) => {
     if(err){
@@ -64,6 +67,20 @@ function isValidUsername(uname){
       }
     })
   })
+}
+
+function getSaltandHash(uname){
+  return new Promise(function(resolve, reject){
+    let sqlQ = "SELECT salt, passhash FROM userInfo WHERE username = '" + uname + "'";
+      con.query(sqlQ, (err, result) => {
+        if(err){
+          return reject(err);
+        }else{
+          
+          resolve(result);   //result[0].numUN
+        }
+      })
+    })
 }
 
 
