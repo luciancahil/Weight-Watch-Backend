@@ -6,7 +6,8 @@ const cors = require('cors');
 const app = express();
 const {PORT = 3000} = process.env
 const mysql = require('mysql');
-var data = require("./Login.json");
+const data = require("./Login.json");
+const forge = require('node-forge');
 
 app.use(cors());
 var SQLResults;
@@ -35,22 +36,33 @@ app.get('/login', (req, res) => {
   //Checks if a username exists
   isValidUsername(username).then(function(result){
     if(result[0].numUN == 0){
-      res.send("No Username");
+      res.end("No Username");
     }
   })
   
   //checks if password hashed matches the hash stored
   getSaltandHash(username).then(function(result){
-    console.log(result[0].salt);
-    console.log(result[0].passhash);
-    console.log(password + result[0].passhash)
+    let hashSalt = result[0].salt;                        //salt stored in table
+    let saltedPassword = password + hashSalt;             //password with salt appended
+
+    let saltedHsh = result[0].passhash;                   //password hash stored in table
+
+    var md = forge.md.sha256.create();
+    md.update(saltedPassword);
+    let inputSaltedHash = md.digest().toHex()           //The hash of the salt appeneded to the password the user just entered
+
+    if(saltedHsh == inputSaltedHash){
+      res.end("Password Correct. Access Granted")
+    }else{
+      res.end("Password Incorrect. Access Denied");
+    }
   })
 
   con.query("SELECT * FROM userInfo", (err, result) => {
     if(err){
-      return res.send(err)
+      return res.end(err)
     }else{
-      return res.send(result[0])
+      return res.end(result[0])
     }
   })
 });
