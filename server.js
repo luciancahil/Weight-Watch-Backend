@@ -26,6 +26,8 @@ app.get('/', (req, res) =>{
 app.get('/login', (req, res) => {
   const{username, password} = req.query;
 
+  console.log(username, password);
+
   //Checks if a username exists
   isValidUsername(username).then(function(result){
     if(result[0].numUN == 0){
@@ -40,6 +42,7 @@ app.get('/login', (req, res) => {
 
     let saltedHsh = result[0].passhash;                   //password hash stored in table
 
+    console.log(saltedHsh)
 
     //Runs the salted entered password through sha256
     var md = forge.md.sha256.create();
@@ -54,8 +57,6 @@ app.get('/login', (req, res) => {
       res.end("Password Incorrect. Access Denied");
     }
   })
-
-  res.end("You should never see this");
 });
 
 
