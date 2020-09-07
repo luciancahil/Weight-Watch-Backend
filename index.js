@@ -11,6 +11,7 @@ var data = require("./Login.json");
 app.use(cors());
 var SQLResults;
 
+
 var con = mysql.createConnection({
   host: data.host,
   user: data.user,
@@ -32,6 +33,16 @@ con.connect(function(err) {
 app.get('/login', (req, res) => {
   const{username, password} = req.query;
   console.log(username, password);
+
+  //Checks if a username exists
+  isValidUsername(username).then(function(result){
+    console.log(result[0].numUN);
+    if(result[0].numUN == 0){
+      res.send("No Username");
+    }
+  })
+  
+
   con.query("SELECT * FROM userInfo", (err, result) => {
     if(err){
       return res.send(err)
@@ -40,6 +51,20 @@ app.get('/login', (req, res) => {
     }
   })
 });
+
+function isValidUsername(uname){
+  return new Promise(function(resolve, reject){
+  let sqlQ = "SELECT COUNT(*) AS numUN FROM userInfo WHERE username = '" + uname + "'";
+    con.query(sqlQ, (err, result) => {
+      if(err){
+        return reject(err);
+      }else{
+        
+        resolve(result);   //result[0].numUN
+      }
+    })
+  })
+}
 
 
 app.listen(PORT, () => {
