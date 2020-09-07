@@ -32,7 +32,13 @@ con.connect(function(err) {
 app.get('/login', (req, res) => {
   const{username, password} = req.query;
   console.log(username, password);
-  res.send(SQLResults[0])
+  con.query("SELECT * FROM userInfo", (err, result) => {
+    if(err){
+      return res.send(err)
+    }else{
+      return res.send(result[0])
+    }
+  })
 });
 
 
