@@ -21,6 +21,7 @@ var con = mysql.createConnection({
 
 //sets SQL results to be the entire contents of the SQL Table
 con.connect(function(err) {
+
   if (err) throw err;
   con.query("SELECT * FROM userInfo", function (err, result, fields) {
     if (err) throw err;
@@ -28,7 +29,9 @@ con.connect(function(err) {
   });
 });
 
-app.get('/', (req, res) => {
+app.get('/login', (req, res) => {
+  const{username, password} = req.query;
+  console.log(username, password);
   res.send(SQLResults[0])
 });
 
