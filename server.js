@@ -4,7 +4,7 @@
 const express = require('express');
 const cors = require('cors');
 const app = express();
-const PORT = 443
+const {PORT = 4000} = process.env
 const mysql = require('mysql');
 const data = require("./Login.json");
 const forge = require('node-forge');
