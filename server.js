@@ -4,12 +4,10 @@
 const express = require('express');
 const cors = require('cors');
 const app = express();
-const {PORT = 4000} = process.env
+const PORT = 443
 const mysql = require('mysql');
 const data = require("./Login.json");
 const forge = require('node-forge');
-var md = forge.md.sha256.create();
-
 
 app.use(cors());
 
@@ -47,6 +45,7 @@ app.get('/login', (req, res) => {
     console.log(saltedHsh)
 
     //Runs the salted entered password through sha256
+    var md = forge.md.sha256.create();
     md.update(saltedPassword);
     let inputSaltedHash = md.digest().toHex()           //The hash of the salt appeneded to the password the user just entered
 
@@ -60,41 +59,6 @@ app.get('/login', (req, res) => {
   })
 });
 
-
-
-//meant for signup
-app.get('/signUp', (req, res) => {
-  const{username, password, gender} = req.query;
-  //too many character
-  if(username.length > 25){
-    res.end("tooLong")
-  }
-
-  //Checks if the username is taken
-  isValidUsername(username).then(function(result){
-    if(result[0].numUN == 1){
-      res.end("Taken");
-    }
-  })
-
-  md.update(username);
-
-  let salt = md.digest().toHex() ;
-  md.update(password + salt);
-
-  let passHash = md.digest().toHex();
-
-  let sqlQ = "INSERT INTO userInfo VALUES ('" + username + "', '" + gender + "', '" + salt + "', '" +passHash  + "')"
-  console.log(sqlQ);
-  con.query(sqlQ, (err, result) => {
-    if(err){
-      return res.end(err);
-    }else{
-      
-      return res.end("Success!")
-    }
-  })
-})
 
 //checks if the username is one we have in the database
 function isValidUsername(uname){
