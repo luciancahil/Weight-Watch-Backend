@@ -102,6 +102,21 @@ app.get('/addEntry', (req, res) => {
   })
 })
 
+app.get('/retrieve', (req, res) =>{
+  const{username} = req.query
+  const GET_FROM_QUE = "SELECT * FROM weightEntries WHERE username = '" + username + "' ORDER BY entrydate"
+
+  con.query(GET_FROM_QUE, (err, results) => {
+    if(err){
+      return res.send(err)
+    }else{
+      return res.json({
+        data:results
+      })
+    }
+  })
+})
+
 app.listen(PORT, () => {
   console.log('Server Loaded on port ${PORT}');
 })
