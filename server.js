@@ -89,6 +89,19 @@ function getSaltandHash(uname){
     })
 }
 
+app.get('/addEntry', (req, res) => {
+  const{username, entrydate, height, abdomen, neck} = req.query;
+  const INSERT_INTO_QUE = "INSERT INTO weightEntries VALUES('" + username + "', " + entrydate + ", " + height + ", " + abdomen + ", " + neck + ")"
+  con.query(INSERT_INTO_QUE, (err, result) => {
+    if(err){
+      return res.send(err);
+    }else{
+      
+      return res.send("success")
+    }
+  })
+})
+
 app.listen(PORT, () => {
   console.log('Server Loaded on port ${PORT}');
 })
