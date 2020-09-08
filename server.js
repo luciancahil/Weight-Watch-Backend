@@ -31,7 +31,7 @@ app.get('/login', (req, res) => {
   //Checks if a username exists
   isValidUsername(username).then(function(result){
     if(result[0].numUN == 0){
-      res.end("No Username");
+      res.end("Unfound");
     }
   })
   
@@ -52,9 +52,9 @@ app.get('/login', (req, res) => {
 
     //checks to see if the hash of the entered password matches the stored hash 
     if(saltedHsh == inputSaltedHash){
-      res.end("Password Correct. Access Granted")
+      res.end("Granted")
     }else{
-      res.end("Password Incorrect. Access Denied");
+      res.end("Denied");
     }
   })
 });
