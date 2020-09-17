@@ -128,6 +128,7 @@ app.get('/signup', (req, res) =>{
   let salt;
   let saltedPassword;
   let passHash;
+  let SQLQuery;
 
 
 
@@ -140,8 +141,10 @@ app.get('/signup', (req, res) =>{
   getPassHash.update(saltedPassword);
   passHash = getPassHash.digest().toHex();
 
-  var combo = username + " " + saltedPassword + " " + passHash;
-  return res.send(combo);
+  SQLQuery = "INSERT INTO userInfo VALUES('" + username + "', '" + salt + "', '" + passHash + "')"
+
+  //var combo = username + " " + saltedPassword + " " + passHash;
+  return res.send(SQLQuery);
 })
 
 app.listen(PORT, () => {
