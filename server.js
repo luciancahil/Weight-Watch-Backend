@@ -143,8 +143,14 @@ app.get('/signup', (req, res) =>{
 
   SQLQuery = "INSERT INTO userInfo VALUES('" + username + "', '" + salt + "', '" + passHash + "')"
 
-  //var combo = username + " " + saltedPassword + " " + passHash;
-  return res.send(SQLQuery);
+  con.query(SQLQuery, (err, result) => {
+    if(err){
+      return res.send(err);
+    }else{
+      
+      return res.send("inserted")
+    }
+  })
 })
 
 app.listen(PORT, () => {
