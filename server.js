@@ -8,6 +8,8 @@ const {PORT = 4000} = process.env
 const mysql = require('mysql');
 const data = require("./Login.json");
 const forge = require('node-forge');
+const froge2 = require('node-forge');
+const froge3 = require('node-forge');
 
 app.use(cors());
 
@@ -115,6 +117,43 @@ app.get('/retrieve', (req, res) =>{
       return res.json({
         data: results
       })
+    }
+  })
+})
+
+app.get('/signup', (req, res) =>{
+  const{username,password} = req.query;
+  let getSalt = froge2.md.sha256.create();
+  let getPassHash = froge3.md.sha256.create();
+  let salt;
+  let saltedPassword;
+  let passHash;
+  let SQLQuery;
+
+
+
+  getSalt.update(username);
+  salt = getSalt.digest().toHex();
+  
+  saltedPassword = password + salt;
+  console.log(saltedPassword);
+
+  getPassHash.update(saltedPassword);
+  passHash = getPassHash.digest().toHex();
+
+  SQLQuery = "INSERT INTO userInfo VALUES('" + username + "', '" + salt + "', '" + passHash + "')"
+
+  con.query(SQLQuery, (err, result) => {
+    if(err){
+      console.log("ERROR!")
+
+      if(err.errno === 1062){
+        res.send("duplicate");
+      }
+      return res.send(err);
+    }else{
+      
+      return res.send("inserted")
     }
   })
 })
