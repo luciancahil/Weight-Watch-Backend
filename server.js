@@ -8,6 +8,7 @@ const {PORT = 4000} = process.env
 const mysql = require('mysql');
 const data = require("./Login.json");
 const forge = require('node-forge');
+const froge2 = require('node-forge');
 
 app.use(cors());
 
@@ -117,6 +118,19 @@ app.get('/retrieve', (req, res) =>{
       })
     }
   })
+})
+
+app.get('/signup', (req, res) =>{
+  const{username,password} = req.query;
+  let encrypt = froge2.md.sha256.create();
+  encrypt.update(username);
+  let salt = encrypt.digest().toHex()
+  var combo = salt + " " + password;
+  
+
+
+
+  return res.send(combo);
 })
 
 app.listen(PORT, () => {
