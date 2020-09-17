@@ -9,6 +9,7 @@ const mysql = require('mysql');
 const data = require("./Login.json");
 const forge = require('node-forge');
 const froge2 = require('node-forge');
+const froge3 = require('node-forge');
 
 app.use(cors());
 
@@ -122,14 +123,24 @@ app.get('/retrieve', (req, res) =>{
 
 app.get('/signup', (req, res) =>{
   const{username,password} = req.query;
-  let encrypt = froge2.md.sha256.create();
-  encrypt.update(username);
-  let salt = encrypt.digest().toHex()
-  var combo = salt + " " + password;
+  let getSalt = froge2.md.sha256.create();
+  let getPassHash = froge3.md.sha256.create();
+  let salt;
+  let saltedPassword;
+  let passHash;
+
+
+
+  getSalt.update(username);
+  salt = getSalt.digest().toHex();
   
+  saltedPassword = password + salt;
+  console.log(saltedPassword);
 
+  getPassHash.update(saltedPassword);
+  passHash = getPassHash.digest().toHex();
 
-
+  var combo = username + " " + saltedPassword + " " + passHash;
   return res.send(combo);
 })
 
