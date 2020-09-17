@@ -145,6 +145,11 @@ app.get('/signup', (req, res) =>{
 
   con.query(SQLQuery, (err, result) => {
     if(err){
+      console.log("ERROR!")
+
+      if(err.errno === 1062){
+        res.send("duplicate");
+      }
       return res.send(err);
     }else{
       
